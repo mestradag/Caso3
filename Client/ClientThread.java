@@ -30,7 +30,7 @@ public class ClientThread extends Thread{
 
     public void run(){
 		try {
-            //laods public key
+            //loads public key
             PublicKey publicaServidor = f.read_kplus("datos_asim_srv.pub");
 
             //first step. we send SECURE INIT to the server
