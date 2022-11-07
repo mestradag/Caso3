@@ -15,13 +15,11 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class ClientThread extends Thread{
 
-    private BufferedReader stdIn;
     private BufferedReader pIn;
     private PrintWriter pOut;
     private SecurityFunctions f;
 
-    public ClientThread(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut){
-        this.stdIn = stdIn;
+    public ClientThread(BufferedReader pIn, PrintWriter pOut){
         this.pIn = pIn;
         this.pOut = pOut;
 
@@ -81,9 +79,9 @@ public class ClientThread extends Thread{
                 SecretKey sk_mac = f.csk2(str_llave);
 
                 //user inputs number to be sent
-                BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
-                System.out.print("Message: ");
-		        String msgInt = br.readLine();
+                //BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
+                //System.out.print("Message: ");
+		        String msgInt = "4";
 
                 String str_valor = new String(msgInt);
                 byte[] byte_valor = str_valor.getBytes();
