@@ -18,11 +18,12 @@ public class ClientThread extends Thread{
     private BufferedReader pIn;
     private PrintWriter pOut;
     private SecurityFunctions f;
+    private int idThread;
 
-    public ClientThread(BufferedReader pIn, PrintWriter pOut){
+    public ClientThread(int idThread, BufferedReader pIn, PrintWriter pOut){
         this.pIn = pIn;
         this.pOut = pOut;
-
+        this.idThread = idThread;
         f = new SecurityFunctions();
     }
 
@@ -44,16 +45,18 @@ public class ClientThread extends Thread{
             String msj = G+","+P+","+Gx;
             byte[] byteSign = str2byte(sign);
 
+            long start = System.nanoTime();
             boolean authenticated = f.checkSignature(publicaServidor, byteSign, msj);
+            System.out.println("Check time of signature "+idThread+" was "+(System.nanoTime()-start)); 
 
-            System.out.println("Was signature verified? "+authenticated);
-
+            System.out.println("Was signature verified for client "+idThread+"? "+authenticated);
             //if the signature was authenticated, then:
             if(authenticated){
                 //fifth step. we send ok to the server
                 pOut.println("OK");
 
                 //sixth.a step. we generate g_y
+                start = System.nanoTime();
                 SecureRandom r = new SecureRandom();
                 int y = Math.abs(r.nextInt());
                 
@@ -65,6 +68,7 @@ public class ClientThread extends Thread{
                 BigInteger g2x = new BigInteger(Gx);
 
                 BigInteger g2y = G2Y(biG,biy,biP);
+                System.out.println("Calculation time of Gy for client "+idThread+" was "+(System.nanoTime()-start));
                 String strG2y = g2y.toString();
 
                 //sixth.b step. it sends g_y to the server
@@ -78,13 +82,8 @@ public class ClientThread extends Thread{
                 SecretKey sk_srv = f.csk1(str_llave);
                 SecretKey sk_mac = f.csk2(str_llave);
 
-                //user inputs number to be sent
-                //BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
-                //System.out.print("Message: ");
-		        String msgInt = "4";
-
-                String str_valor = new String(msgInt);
-                byte[] byte_valor = str_valor.getBytes();
+                //it sends the id of the thread
+                byte[] byte_valor = Integer.toString(idThread).getBytes();
                 
                 //creation of iv1
                 byte[] iv1 = generateIvBytes();
@@ -92,8 +91,12 @@ public class ClientThread extends Thread{
                 IvParameterSpec ivSpec1 = new IvParameterSpec(iv1);
 
                 //eight step, we send encrypted message, hmac and iv1
+                start = System.nanoTime();
                 byte[] rta_consulta = f.senc(byte_valor, sk_srv,ivSpec1);
+                System.out.println("Encrypting time of message for client "+idThread+" was "+(System.nanoTime()-start));
+                start = System.nanoTime();
                 byte [] rta_mac = f.hmac(byte_valor, sk_mac);
+                System.out.println("Creation time of auth code for client "+idThread+" was "+(System.nanoTime()-start));
                 String m1 = byte2str(rta_consulta);
                 String m2 = byte2str(rta_mac);
 
@@ -117,13 +120,13 @@ public class ClientThread extends Thread{
 
                     //twelfth step, it verifies the integrity of the info received
                     boolean verificar = f.checkInt(descifrado, sk_mac, byte_mac);
-                    System.out.println("Integrity check: " + verificar);    		
+                    System.out.println("Was integrity okay for client "+idThread+"? "+ verificar);    		
                     if (verificar) {
                         //thirteenth step, we send an OK to the server
                         pOut.println("OK");
 
                         String str_original = new String(descifrado, StandardCharsets.UTF_8);
-                        System.out.println(str_original);
+                        System.out.println("Response for client "+idThread+": "+str_original);
                     }
                     else{
                         pOut.println("ERROR");

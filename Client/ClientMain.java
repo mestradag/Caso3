@@ -18,12 +18,9 @@ public class ClientMain {
 		
 		Scanner numClient = new Scanner(System.in);
 
-    	System.out.println("Enter the number of clients:");
-
+    	System.out.print("Enter the number of clients: ");
 		int numClients = numClient.nextInt();
-		System.out.println("The number of clientes is: " + numClients);
 
-		System.out.println("Client...");
 		try {
 			// creates the socket in client side
 			for(int i = 0; i < numClients; i++) {
@@ -31,23 +28,14 @@ public class ClientMain {
 				PrintWriter escritor = new PrintWriter(socket.getOutputStream(), true);
 				BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-				// runs client thread
-				ClientThread clientThread = new ClientThread(lector, escritor);
+				//runs client thread
+				ClientThread clientThread = new ClientThread(i+1, lector, escritor);
 				clientThread.start();
-
-				System.out.println("Client " + i + " connected");
+				System.out.println("Client " + (i+1) + " started");
 			}
 		} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(-1);
 		}
-		
-		// creates object to read user's input
-		//BufferedReader stdIn = new BufferedReader (new InputStreamReader(System.in));
-
-		// runs client thread
-		//ClientThread clientThread = new ClientThread(stdIn, lector, escritor);
-		//clientThread.start();
-
 	}
 }
