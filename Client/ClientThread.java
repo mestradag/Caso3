@@ -47,7 +47,7 @@ public class ClientThread extends Thread{
 
             long start = System.nanoTime();
             boolean authenticated = f.checkSignature(publicaServidor, byteSign, msj);
-            System.out.println("Check time of signature "+idThread+" was "+(System.nanoTime()-start)); 
+            System.out.println("Elapsed time for verifying the signature of client "+idThread+" was "+(System.nanoTime()-start) + " nanoseconds"); 
 
             System.out.println("Was signature verified for client "+idThread+"? "+authenticated);
             //if the signature was authenticated, then:
@@ -68,7 +68,7 @@ public class ClientThread extends Thread{
                 BigInteger g2x = new BigInteger(Gx);
 
                 BigInteger g2y = G2Y(biG,biy,biP);
-                System.out.println("Calculation time of Gy for client "+idThread+" was "+(System.nanoTime()-start));
+                System.out.println("Elapsed time of computing Gy for client "+idThread+" was "+(System.nanoTime()-start) + " nanoseconds");
                 String strG2y = g2y.toString();
 
                 //sixth.b step. it sends g_y to the server
@@ -93,10 +93,10 @@ public class ClientThread extends Thread{
                 //eight step, we send encrypted message, hmac and iv1
                 start = System.nanoTime();
                 byte[] rta_consulta = f.senc(byte_valor, sk_srv,ivSpec1);
-                System.out.println("Encrypting time of message for client "+idThread+" was "+(System.nanoTime()-start));
+                System.out.println("Elapsed time of encrypting request for client "+idThread+" was "+(System.nanoTime()-start) + " nanoseconds");
                 start = System.nanoTime();
                 byte [] rta_mac = f.hmac(byte_valor, sk_mac);
-                System.out.println("Creation time of auth code for client "+idThread+" was "+(System.nanoTime()-start));
+                System.out.println("Elapsed time of generating the MAC for client "+idThread+" was "+(System.nanoTime()-start) + " nanoseconds");
                 String m1 = byte2str(rta_consulta);
                 String m2 = byte2str(rta_mac);
 

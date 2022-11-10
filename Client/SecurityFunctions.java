@@ -99,10 +99,10 @@ public class SecurityFunctions {
 	
 	public byte[] senc (byte[] msg, SecretKey key, IvParameterSpec iv) throws Exception {
 		Cipher decifrador = Cipher.getInstance(algoritmo_simetrico); 
-		long start = System.nanoTime();
+		//long start = System.nanoTime();
 		decifrador.init(Cipher.ENCRYPT_MODE, key, iv); 
 		byte[] tmp = decifrador.doFinal(msg);
-	    long end = System.nanoTime();      
+	    //long end = System.nanoTime();      
 	    //System.out.println(" --- Elapsed Time for SYM encryption in nano seconds: "+ (end-start));   
 		return tmp;
 	}
